@@ -506,6 +506,62 @@ print_success() {
   printf '%s\n' "• Follow us on X: $(fmt_link @ohmyzsh https://x.com/ohmyzsh)"
   printf '%s\n' "• Join our Discord community: $(fmt_link "Discord server" https://discord.gg/ohmyzsh)"
   printf '%s\n' "• Get stickers, t-shirts, coffee mugs and more: $(fmt_link "Planet Argon Shop" https://shop.planetargon.com/collections/oh-my-zsh)"
+  # ============================================
+# 自动安装自定义插件和主题
+# ============================================
+
+printf '%s\n' "${BLUE}正在安装自定义插件和主题...${RESET}"
+
+# 定义要安装的插件
+CUSTOM_PLUGINS=(
+    "zsh-autosuggestions|https://github.com/zsh-users/zsh-autosuggestions"
+    "zsh-syntax-highlighting|https://github.com/zsh-users/zsh-syntax-highlighting"
+    "zsh-completions|https://github.com/zsh-users/zsh-completions"
+)
+
+# 定义要安装的主题
+CUSTOM_THEMES=(
+    "powerlevel10k|https://github.com/romkatv/powerlevel10k"
+)
+
+# 安装插件
+for plugin_item in "${CUSTOM_PLUGINS[@]}"; do
+    plugin_name="${plugin_item%%|*}"
+    plugin_url="${plugin_item##*|}"
+    plugin_path="$ZSH/custom/plugins/$plugin_name"
+    
+    if [ ! -d "$plugin_path" ]; then
+        printf '%s\n' "${BLUE}  → 安装插件: $plugin_name${RESET}"
+        if git clone --depth=1 -q "$plugin_url" "$plugin_path" 2>/dev/null; then
+            printf '%s\n' "${GREEN}  ✓ $plugin_name 安装成功${RESET}"
+        else
+            printf '%s\n' "${RED}  ✗ $plugin_name 安装失败${RESET}"
+        fi
+    fi
+done
+
+# 安装主题
+for theme_item in "${CUSTOM_THEMES[@]}"; do
+    theme_name="${theme_item%%|*}"
+    theme_url="${theme_item##*|}"
+    theme_path="$ZSH/custom/themes/$theme_name"
+    
+    if [ ! -d "$theme_path" ]; then
+        printf '%s\n' "${BLUE}  → 安装主题: $theme_name${RESET}"
+        if git clone --depth=1 -q "$theme_url" "$theme_path" 2>/dev/null; then
+            printf '%s\n' "${GREEN}  ✓ $theme_name 安装成功${RESET}"
+        else
+            printf '%s\n' "${RED}  ✗ $theme_name 安装失败${RESET}"
+        fi
+    fi
+done
+
+printf '%s\n' "${GREEN}✓ 自定义组件安装完成！${RESET}"
+printf '\n'
+
+# ============================================
+# 结束自定义安装
+# ============================================
   printf '%s\n' $FMT_RESET
 }
 
