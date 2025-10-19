@@ -488,6 +488,49 @@ EOF
 
   echo
 }
+# ============================================
+# Auto-install custom plugins and themes
+# ============================================
+
+install_custom_plugins() {
+  printf '%s\n' "${FMT_BLUE}Installing custom plugins and themes...${FMT_RESET}"
+
+  # Install zsh-autosuggestions
+  if [ ! -d "$ZSH/custom/plugins/zsh-autosuggestions" ]; then
+    printf '%s\n' "${FMT_BLUE}  -> Installing zsh-autosuggestions${FMT_RESET}"
+    git clone --depth=1 -q https://github.com/zsh-users/zsh-autosuggestions "$ZSH/custom/plugins/zsh-autosuggestions" 2>/dev/null && \
+    printf '%s\n' "${FMT_GREEN}  ✓ zsh-autosuggestions installed${FMT_RESET}" || \
+    printf '%s\n' "${FMT_RED}  ✗ zsh-autosuggestions failed${FMT_RESET}"
+  fi
+
+  # Install zsh-syntax-highlighting
+  if [ ! -d "$ZSH/custom/plugins/zsh-syntax-highlighting" ]; then
+    printf '%s\n' "${FMT_BLUE}  -> Installing zsh-syntax-highlighting${FMT_RESET}"
+    git clone --depth=1 -q https://github.com/zsh-users/zsh-syntax-highlighting "$ZSH/custom/plugins/zsh-syntax-highlighting" 2>/dev/null && \
+    printf '%s\n' "${FMT_GREEN}  ✓ zsh-syntax-highlighting installed${FMT_RESET}" || \
+    printf '%s\n' "${FMT_RED}  ✗ zsh-syntax-highlighting failed${FMT_RESET}"
+  fi
+
+  # Install zsh-completions
+  if [ ! -d "$ZSH/custom/plugins/zsh-completions" ]; then
+    printf '%s\n' "${FMT_BLUE}  -> Installing zsh-completions${FMT_RESET}"
+    git clone --depth=1 -q https://github.com/zsh-users/zsh-completions "$ZSH/custom/plugins/zsh-completions" 2>/dev/null && \
+    printf '%s\n' "${FMT_GREEN}  ✓ zsh-completions installed${FMT_RESET}" || \
+    printf '%s\n' "${FMT_RED}  ✗ zsh-completions failed${FMT_RESET}"
+  fi
+
+  # Install powerlevel10k theme
+  if [ ! -d "$ZSH/custom/themes/powerlevel10k" ]; then
+    printf '%s\n' "${FMT_BLUE}  -> Installing powerlevel10k theme${FMT_RESET}"
+    git clone --depth=1 -q https://github.com/romkatv/powerlevel10k "$ZSH/custom/themes/powerlevel10k" 2>/dev/null && \
+    printf '%s\n' "${FMT_GREEN}  ✓ powerlevel10k installed${FMT_RESET}" || \
+    printf '%s\n' "${FMT_RED}  ✗ powerlevel10k failed${FMT_RESET}"
+  fi
+
+  printf '%s\n' "${FMT_GREEN}Custom components installation completed!${FMT_RESET}"
+  printf '\n'
+}
+
 
 # shellcheck disable=SC2183  # printf string has more %s than arguments ($FMT_RAINBOW expands to multiple arguments)
 print_success() {
@@ -506,62 +549,7 @@ print_success() {
   printf '%s\n' "• Follow us on X: $(fmt_link @ohmyzsh https://x.com/ohmyzsh)"
   printf '%s\n' "• Join our Discord community: $(fmt_link "Discord server" https://discord.gg/ohmyzsh)"
   printf '%s\n' "• Get stickers, t-shirts, coffee mugs and more: $(fmt_link "Planet Argon Shop" https://shop.planetargon.com/collections/oh-my-zsh)"
-  # ============================================
-# 自动安装自定义插件和主题
-# ============================================
-
-printf '%s\n' "${BLUE}正在安装自定义插件和主题...${RESET}"
-
-# 定义要安装的插件
-CUSTOM_PLUGINS=(
-    "zsh-autosuggestions|https://github.com/zsh-users/zsh-autosuggestions"
-    "zsh-syntax-highlighting|https://github.com/zsh-users/zsh-syntax-highlighting"
-    "zsh-completions|https://github.com/zsh-users/zsh-completions"
-)
-
-# 定义要安装的主题
-CUSTOM_THEMES=(
-    "powerlevel10k|https://github.com/romkatv/powerlevel10k"
-)
-
-# 安装插件
-for plugin_item in "${CUSTOM_PLUGINS[@]}"; do
-    plugin_name="${plugin_item%%|*}"
-    plugin_url="${plugin_item##*|}"
-    plugin_path="$ZSH/custom/plugins/$plugin_name"
-    
-    if [ ! -d "$plugin_path" ]; then
-        printf '%s\n' "${BLUE}  → 安装插件: $plugin_name${RESET}"
-        if git clone --depth=1 -q "$plugin_url" "$plugin_path" 2>/dev/null; then
-            printf '%s\n' "${GREEN}  ✓ $plugin_name 安装成功${RESET}"
-        else
-            printf '%s\n' "${RED}  ✗ $plugin_name 安装失败${RESET}"
-        fi
-    fi
-done
-
-# 安装主题
-for theme_item in "${CUSTOM_THEMES[@]}"; do
-    theme_name="${theme_item%%|*}"
-    theme_url="${theme_item##*|}"
-    theme_path="$ZSH/custom/themes/$theme_name"
-    
-    if [ ! -d "$theme_path" ]; then
-        printf '%s\n' "${BLUE}  → 安装主题: $theme_name${RESET}"
-        if git clone --depth=1 -q "$theme_url" "$theme_path" 2>/dev/null; then
-            printf '%s\n' "${GREEN}  ✓ $theme_name 安装成功${RESET}"
-        else
-            printf '%s\n' "${RED}  ✗ $theme_name 安装失败${RESET}"
-        fi
-    fi
-done
-
-printf '%s\n' "${GREEN}✓ 自定义组件安装完成！${RESET}"
-printf '\n'
-
-# ============================================
-# 结束自定义安装
-# ============================================
+  
   printf '%s\n' $FMT_RESET
 }
 
@@ -620,6 +608,8 @@ EOF
   setup_ohmyzsh
   setup_zshrc
   setup_shell
+  # 添加这一行，调用自定义插件安装
+  install_custom_plugins
 
   print_success
 
